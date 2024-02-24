@@ -6,6 +6,10 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
+    "dev": "npm run start:dev",
+    "docker:up": "sudo docker compose up -d",
+    "docker:stop": "sudo docker compose stop",
+    "docker:psql": "sudo docker exec -it ecom-db psql -U pguser -d ecom",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",

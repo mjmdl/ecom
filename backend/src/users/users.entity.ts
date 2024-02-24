@@ -1,9 +1,12 @@
 import { UUID } from 'crypto';
+import { RoleEntity } from 'src/roles/roles.entity';
 import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinTable,
+  ManyToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -37,4 +40,12 @@ export class UserEntity {
 
   @DeleteDateColumn({ select: false })
   deleted?: Date;
+
+  @ManyToMany(() => RoleEntity, (role) => role.users)
+  @JoinTable({
+    name: 'users_have_roles',
+    joinColumn: { name: 'user_id', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'role_id', referencedColumnName: 'id' },
+  })
+  roles?: RoleEntity[];
 }

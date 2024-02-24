@@ -7,12 +7,13 @@ import {
   createParamDecorator,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { PayloadDto } from './auth.dto';
+import { CurrentUser } from './auth.dto';
 import { Request } from 'express';
+import { UUID } from 'crypto';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  static readonly PAYLOAD_KEY = 'payload';
+  static readonly USER_KEY = 'currentUser';
 
   constructor(private readonly authService: AuthService) {}
 
@@ -25,7 +26,10 @@ export class AuthGuard implements CanActivate {
     }
 
     const payloadDto = await this.authService.extractBearerToken(authorization);
-    request[AuthGuard.PAYLOAD_KEY] = payloadDto;
+    const userContext = await this.authService.getUserContext(
+      payloadDto.userId,
+    );
+    request[AuthGuard.USER_KEY] = userContext;
 
     return true;
   }
@@ -35,9 +39,17 @@ export function RequireAuth(): MethodDecorator & ClassDecorator {
   return UseGuards(AuthGuard);
 }
 
-export const Payload = createParamDecorator(
-  (data: unknown, context: ExecutionContext): PayloadDto => {
+export const User = createParamDecorator(
+  (data: unknown, context: ExecutionContext): CurrentUser => {
     const request = context.switchToHttp().getRequest();
-    return request[AuthGuard.PAYLOAD_KEY] as PayloadDto;
+    return request[AuthGuard.USER_KEY] as CurrentUser;
+  },
+);
+
+export const UserId = createParamDecorator(
+  (data: unknown, context: ExecutionContext): UUID => {
+    const request = context.switchToHttp().getRequest();
+    const payloadDto = request[AuthGuard.USER_KEY] as CurrentUser;
+    return payloadDto.id;
   },
 );

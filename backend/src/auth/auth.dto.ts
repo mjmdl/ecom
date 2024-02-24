@@ -8,6 +8,7 @@ import {
   Length,
 } from 'class-validator';
 import { UUID } from 'crypto';
+import { RoleEnum } from 'src/roles/roles.entity';
 import { UserEntity } from 'src/users/users.entity';
 
 export class SignupDto {
@@ -51,4 +52,14 @@ export class PayloadDto {
 
 export class TokenDto {
   constructor(public bearerToken: string) {}
+}
+
+export class CurrentUser {
+  id: UUID;
+  roles?: RoleEnum[];
+
+  constructor(userId: UUID, roles?: RoleEnum[]) {
+    this.id = userId;
+    this.roles = roles;
+  }
 }

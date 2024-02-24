@@ -8,10 +8,11 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from 'src/users/users.entity';
 import { Repository } from 'typeorm';
-import { LoginDto, PayloadDto, SignupDto } from './auth.dto';
+import { LoginDto, PayloadDto, SignupDto, CurrentUser } from './auth.dto';
 import { compare, genSalt, hash } from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { UUID } from 'crypto';
 
 @Injectable()
 export class AuthService {
@@ -73,7 +74,8 @@ export class AuthService {
     const user = await this.usersRepository
       .findOne({
         where: { email },
-        select: { id: true, password: true },
+        select: { id: true, password: true, roles: { name: true } },
+        relations: { roles: true },
       })
       .catch((error) => {
         throw new InternalServerErrorException('Failed to search for user.');
@@ -118,5 +120,22 @@ export class AuthService {
         throw new UnauthorizedException('Token is not valid.');
       });
     return payloadDto;
+  }
+
+  async getUserContext(userId: UUID): Promise<CurrentUser> {
+    const user = await this.usersRepository
+      .findOneOrFail({
+        where: { id: userId },
+        select: { roles: { name: true } },
+        relations: { roles: true },
+      })
+      .catch((error) => {
+        console.error(error);
+        throw new InternalServerErrorException();
+      });
+    return new CurrentUser(
+      userId,
+      user.roles.map((role) => role.name),
+    );
   }
 }

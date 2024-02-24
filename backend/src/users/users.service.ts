@@ -20,11 +20,15 @@ export class UsersService {
       .findOne({
         where: { id: userId },
         select: {
+          id: true,
           name: true,
           email: true,
+          roles: { name: true },
         },
+        relations: { roles: true },
       })
       .catch((error) => {
+        console.error(error);
         throw new InternalServerErrorException('Failed to retrieve the user.');
       });
 
