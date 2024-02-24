@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  ecom_db:
+    container_name: ecom-db
+    image: postgres:16
+    restart: no
+    volumes:
+      - ${DOCKER_POSTGRES_VOLUME}
+    ports:
+      - ${POSTGRES_PORT}:5432
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DATABASE}
