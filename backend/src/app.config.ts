@@ -3,6 +3,7 @@ import { ConfigModuleOptions, ConfigService } from '@nestjs/config';
 import { TypeOrmModuleAsyncOptions } from '@nestjs/typeorm';
 import { plainToInstance } from 'class-transformer';
 import {
+  IsNotEmpty,
   IsNumber,
   IsNumberString,
   IsString,
@@ -15,6 +16,17 @@ class Environment {
 
   @IsString()
   TYPEORM_SYNCHRONIZE_POSTGRES: string = 'false';
+
+  @IsNotEmpty()
+  @IsString()
+  JSONWEBTOKEN_SECRET: string;
+
+  @IsString()
+  JSONWEBTOKEN_EXPIRATION: string = '24h';
+
+  @IsNotEmpty()
+  @IsNumberString()
+  BCRYPT_PASSWORD_ROUNDS: number;
 
   @IsString()
   POSTGRES_HOST: string = 'localhost';
