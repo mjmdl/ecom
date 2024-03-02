@@ -1,5 +1,5 @@
-import { ConfigModuleOptions } from '@nestjs/config';
-import { Transform, plainToInstance } from 'class-transformer';
+import {ConfigModuleOptions} from '@nestjs/config';
+import {Transform, plainToInstance} from 'class-transformer';
 import {
   IsBoolean,
   IsNotEmpty,
